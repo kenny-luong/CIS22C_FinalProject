@@ -33,3 +33,15 @@ void Business::displayProfile() {
 void Business::displayReviews() {
 	//TODO
 }
+
+bool Business::operator<(const Business& b) {
+	return (name < b.name);
+}
+
+bool Business::operator>(const Business& b) {
+	return (name > b.name);
+}
+
+bool Business::operator==(const Business& b) {
+	return name == b.name;
+}
