@@ -25,5 +25,8 @@ public:
 	void setAverageRating(int);
 	void displayProfile();
 	void displayReviews();
+	bool operator<(const Business&);
+	bool operator>(const Business&);
+	bool operator==(const Business&);
 };
 #endif
