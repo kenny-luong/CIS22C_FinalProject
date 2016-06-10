@@ -1,30 +1,28 @@
 #ifndef _BUSINESS_H
 #define _BUSINESS_H
 #include <string>
-#include "BusinessOwner.h"
-#include "ReviewContainer.h"
+#include <vector>
+#include <iostream>
+#include <fstream>
 
 class Business {
 private:
 	std::string name;
-	std::string description;
-	BusinessOwner owner;
-	ReviewContainer reviews;
+	std::string location;
+	int numRatings;
+	int ratingsSum;
 	int averageRating;
 public:
-	Business();
+	Business(std::string, std::string);
+	Business(std::string, std::string, int, int, int);
 	std::string getName() { return name; }
-	std::string getDescription() { return description; }
-	BusinessOwner getBusinessOwner() { return owner; }
-	ReviewContainer getReviews() { return reviews; }
-	int getAverageRating() { return averageRating; }
-	void setName(std::string);
-	void setDescription(std::string);
-	void setOwner(BusinessOwner&);
-	void setReviews(ReviewContainer&);
-	void setAverageRating(int);
+	std::string getLocation() { return location; }
+	int getRatingsCount() { return numRatings; }
+	int getRatingsSum() { return ratingsSum; }
+	int getAvgRating() { return averageRating; }
+	void addRating(int);
 	void displayProfile();
-	void displayReviews();
+	void writeToFile(std::ostream&);
 	bool operator<(const Business&);
 	bool operator>(const Business&);
 	bool operator==(const Business&);
