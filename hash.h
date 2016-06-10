@@ -11,12 +11,10 @@ class Hash {
 public:
   static const int SIZE = 53;
   HashNode<Type> *bucket[SIZE];
-  int count;
 public:
   Hash() {
     for (int i = 0; i < SIZE; i++) {
       bucket[i] = NULL;
-      count = 0;
     }
   }
 
@@ -33,31 +31,33 @@ public:
     int index = hashFunction(keyValue);
 
     HashNode<Type> *temp = bucket[index];
-    if (count < 3) {
-      if (bucket[index] == NULL) {
-        bucket[index] = newNode;
-      } else {
+
+    if (bucket[index] == NULL) {
+      bucket[index] = newNode;
+      bucket[index]->count++;
+    } else {
+      if (bucket[index]->count < 3) {
         while (temp->link != NULL) {
           temp = temp->link;
         }
         temp->link = newNode;
+        bucket[index]->count++;
       }
-      count++;
-      return true;
     }
+    return true;
+
     return false;
   }
 
-  void displayList(string keyValue) {
-    int index = hashFunction(keyValue);
 
-    HashNode<Type> *temp = bucket[index];
-
-    while (temp != NULL) {
-      cout << temp->keyValue << endl;
-      temp = temp->link;
+  void displayList() {
+    for (int i = 0; i < SIZE; i++) {
+      if (bucket[i] != NULL) {
+        bucket[i]->displayBucket(bucket[i]);
+      }
     }
   }
+
 
   /*
     deleteObject requires that you verify the object exists already.
