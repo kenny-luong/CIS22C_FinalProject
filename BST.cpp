@@ -10,17 +10,17 @@ class BST {
 private:
 	BSTNode<T>* root;
 	BSTNode<T>* insertR(BSTNode<T>*, BSTNode<T>*);
-	BSTNode<T>* removeNode(BSTNode<T>*, T, BSTNode<T>*);
+	BSTNode<T>* removeNode(BSTNode<T>*, std::string, BSTNode<T>*);
 	void printR(BSTNode<T>*, int, std::ostream&);
-	T getMin(BSTNode<T>*);
-	bool findR(BSTNode<T>*, T);
+	BSTNode<T>* getMin(BSTNode<T>*);
+	bool findR(BSTNode<T>*, std::string);
 public:
 	BST();
 	~BST();
-	void insertBST(T);
+	void insertBST(T, std::string);
 	void printIndentedTree(std::ostream&);
-	bool deleteBST(T);
-	bool isInTree(T);
+	bool deleteBST(std::string);
+	bool isInTree(std::string);
 	BSTNode<T>* getRoot() { return root; }
 };
 
@@ -39,7 +39,7 @@ BSTNode<T>* BST<T>::insertR(BSTNode<T>* r, BSTNode<T>* data) {
 	else {
 		BSTNode<T>* leftPtr = r->getLeft();
 		BSTNode<T>* rightPtr = r->getRight();
-		if (data->getData() < r->getData()) { //insert as left child
+		if (data->getKey() < r->getKey()) { //insert as left child
 			leftPtr = insertR(leftPtr, data);
 			r->setLeft(leftPtr);
 		}
@@ -54,8 +54,8 @@ BSTNode<T>* BST<T>::insertR(BSTNode<T>* r, BSTNode<T>* data) {
 //public insert method
 //calls recursive insert method
 template <class T>
-void BST<T>::insertBST(T data) {
-	BSTNode<T>* n = new BSTNode<T>(data);
+void BST<T>::insertBST(T data, std::string key) {
+	BSTNode<T>* n = new BSTNode<T>(data, key);
 	root = insertR(root, n);
 }
 
@@ -65,7 +65,7 @@ void BST<T>::printR(BSTNode<T>* r, int indent, std::ostream& output) {
 	if (r != nullptr) {
 		if (indent)
 			output << std::setw(indent) << " ";
-		output << r->getData() << "\n";
+		output << r->getKey() << "\n";
 		if (r->getLeft() != nullptr)
 			printR(r->getLeft(), indent + 2, output);
 		if (r->getRight() != nullptr)
@@ -81,14 +81,14 @@ void BST<T>::printIndentedTree(std::ostream& output) {
 
 //deletes the node containing the given key if it exists
 template <class T>
-bool BST<T>::deleteBST(T value) {
+bool BST<T>::deleteBST(std::string key) {
 	if (root == nullptr) //empty tree
 		return false;
 	else {
-		if (root->getData() == value) { //root contains key
+		if (root->getKey() == key) { //root contains key
 			BSTNode<T> temp(nullptr, nullptr);
 			temp.setLeft(root);
-			BSTNode<T>* removedNode = removeNode(root, value, &temp);
+			BSTNode<T>* removedNode = removeNode(root, key, &temp);
 			root = temp.getLeft();
 			if (removedNode != nullptr) {
 				delete removedNode;
@@ -98,7 +98,7 @@ bool BST<T>::deleteBST(T value) {
 				return false;
 		}
 		else { //search thre rest of the tree for the key
-			BSTNode<T>* removedNode = removeNode(root, value, nullptr);
+			BSTNode<T>* removedNode = removeNode(root, key, nullptr);
 			if (removedNode != nullptr) {
 				delete removedNode;
 				return true;
@@ -112,23 +112,25 @@ bool BST<T>::deleteBST(T value) {
 //recursively searches the given tree for the key
 //returns pointer to the node to be deleted
 template <class T>
-BSTNode<T>* BST<T>::removeNode(BSTNode<T>* r, T value, BSTNode<T>* parent) {
-	if (value < r->getData()) { //move down to the left subtree if it exists
+BSTNode<T>* BST<T>::removeNode(BSTNode<T>* r, std::string key, BSTNode<T>* parent) {
+	if (key < r->getKey()) { //move down to the left subtree if it exists
 		if (r->getLeft() != nullptr)
-			return removeNode(r->getLeft(), value, r);
+			return removeNode(r->getLeft(), key, r);
 		else
 			return nullptr;
 	}
-	else if (value > r->getData()) { //move down to the right subtree if it exists
+	else if (key > r->getKey()) { //move down to the right subtree if it exists
 		if (r->getRight() != nullptr)
-			return removeNode(r->getRight(), value, r);
+			return removeNode(r->getRight(), key, r);
 		else
 			return nullptr;
 	}
-	else { //found the node to be dleted
-		if (r->getLeft() != nullptr && r->getRight() != nullptr) { //node is a leaf
-			r->setData(getMin(r->getRight()));
-			return removeNode(r->getRight(), r->getData(), r);
+	else { //found the node to be deleted
+		if (r->getLeft() != nullptr && r->getRight() != nullptr) { //node is not a leaf
+			BSTNode<T>* minNode = getMin(r->getRight());
+			r->setData(minNode->getData());
+			r->setKey(minNode->getKey());
+			return removeNode(r->getRight(), r->getKey(), r);
 		}
 		else if (parent->getLeft() == r) { //node is left child of a 2-node
 			parent->setLeft((r->getLeft() != nullptr) ? r->getLeft() : r->getRight());
@@ -138,14 +140,17 @@ BSTNode<T>* BST<T>::removeNode(BSTNode<T>* r, T value, BSTNode<T>* parent) {
 			parent->setRight((r->getLeft() != nullptr) ? r->getLeft() : r->getRight());
 			return r;
 		}
+		else { //default case, just here for safety, shouldn't ever be reached
+			return nullptr;
+		}
 	}
 }
 
-//returns the minimum value of a given tree
+//returns a pointer to the node containing the minimum key of a given tree
 template <class T>
-T BST<T>::getMin(BSTNode<T>* node) {
+BSTNode<T>* BST<T>::getMin(BSTNode<T>* node) {
 	if (node->getLeft() == nullptr)
-		return node->getData();
+		return node;
 	else
 		return getMin(node->getLeft());
 }
@@ -154,18 +159,18 @@ T BST<T>::getMin(BSTNode<T>* node) {
 template <class T>
 BST<T>::~BST() {
 	while (root != nullptr) {
-		deleteBST(root->getData());
+		deleteBST(root->getKey());
 	}
 }
 
 //recursively searches a tree and returns true if the key exists
 template <class T>
-bool BST<T>::findR(BSTNode<T>* r, T key) {
+bool BST<T>::findR(BSTNode<T>* r, std::string key) {
 	if (r == nullptr)
 		return false;
-	else if (r->getData() == key)
+	else if (r->getKey() == key)
 		return true;
-	else if (key > r->getData())
+	else if (key > r->getKey())
 		return findR(r->getRight(), key);
 	else
 		return findR(r->getLeft(), key);
@@ -173,7 +178,7 @@ bool BST<T>::findR(BSTNode<T>* r, T key) {
 
 //returns true if the given key exists in the tree
 template <class T>
-bool BST<T>::isInTree(T key) {
+bool BST<T>::isInTree(std::string key) {
 	if (root == nullptr)
 		return false;
 	else {
