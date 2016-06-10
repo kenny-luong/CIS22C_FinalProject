@@ -2,6 +2,8 @@
 #define _BST
 #include "BSTNode.cpp"
 #include <iostream>
+#include <iomanip>
+#include <fstream>
 
 template <class T>
 class BST {
@@ -9,14 +11,14 @@ private:
 	BSTNode<T>* root;
 	BSTNode<T>* insertR(BSTNode<T>*, BSTNode<T>*);
 	BSTNode<T>* removeNode(BSTNode<T>*, T, BSTNode<T>*);
-	void printR(BSTNode<T>*);
+	void printR(BSTNode<T>*, int, std::ostream&);
 	T getMin(BSTNode<T>*);
 	bool findR(BSTNode<T>*, T);
 public:
 	BST();
 	~BST();
 	void insertBST(T);
-	void printBST();
+	void printIndentedTree(std::ostream&);
 	bool deleteBST(T);
 	bool isInTree(T);
 	BSTNode<T>* getRoot() { return root; }
@@ -38,11 +40,11 @@ BSTNode<T>* BST<T>::insertR(BSTNode<T>* r, BSTNode<T>* data) {
 		BSTNode<T>* leftPtr = r->getLeft();
 		BSTNode<T>* rightPtr = r->getRight();
 		if (data->getData() < r->getData()) { //insert as left child
-			leftPtr=insertR(leftPtr, data);
+			leftPtr = insertR(leftPtr, data);
 			r->setLeft(leftPtr);
 		}
 		else { //insert as right child
-			rightPtr=insertR(rightPtr, data);
+			rightPtr = insertR(rightPtr, data);
 			r->setRight(rightPtr);
 		}
 		return r;
@@ -53,26 +55,28 @@ BSTNode<T>* BST<T>::insertR(BSTNode<T>* r, BSTNode<T>* data) {
 //calls recursive insert method
 template <class T>
 void BST<T>::insertBST(T data) {
-	BSTNode<T>* n = new BSTNode<T>(data);	
+	BSTNode<T>* n = new BSTNode<T>(data);
 	root = insertR(root, n);
 }
 
-//prints the tree via inorder traversal
+//prints the tree in an indented format
 template <class T>
-void BST<T>::printR(BSTNode<T>* r) {
-	if (r == nullptr) {
-		return;
+void BST<T>::printR(BSTNode<T>* r, int indent, std::ostream& output) {
+	if (r != nullptr) {
+		if (indent)
+			output << std::setw(indent) << " ";
+		output << r->getData() << "\n";
+		if (r->getLeft() != nullptr)
+			printR(r->getLeft(), indent + 2, output);
+		if (r->getRight() != nullptr)
+			printR(r->getRight(), indent + 2, output);
 	}
-	printR(r->getLeft());
-	std::cout << r->getData() << " ";
-	printR(r->getRight());
 }
 
-//calls the recursive inorder print method
+//calls the recursive print method
 template <class T>
-void BST<T>::printBST() {
-	printR(root);
-	std::cout << std::endl;
+void BST<T>::printIndentedTree(std::ostream& output) {
+	printR(root, 0, output);
 }
 
 //deletes the node containing the given key if it exists
@@ -124,7 +128,7 @@ BSTNode<T>* BST<T>::removeNode(BSTNode<T>* r, T value, BSTNode<T>* parent) {
 	else { //found the node to be dleted
 		if (r->getLeft() != nullptr && r->getRight() != nullptr) { //node is a leaf
 			r->setData(getMin(r->getRight()));
-			return removeNode(r->getRight(),r->getData(), r);
+			return removeNode(r->getRight(), r->getData(), r);
 		}
 		else if (parent->getLeft() == r) { //node is left child of a 2-node
 			parent->setLeft((r->getLeft() != nullptr) ? r->getLeft() : r->getRight());
