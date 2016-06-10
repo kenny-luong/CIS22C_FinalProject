@@ -13,7 +13,6 @@ void Business::setName(std::string n) {
 void Business::setDescription(std::string d) {
 	description = d;
 }
-
 void Business::setOwner(BusinessOwner& o) {
 	owner = o;
 }
