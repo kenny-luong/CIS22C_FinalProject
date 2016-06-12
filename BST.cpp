@@ -4,6 +4,7 @@
 #include <iostream>
 #include <iomanip>
 #include <fstream>
+#include "includes.h"
 
 template <class T>
 class BST {
@@ -19,6 +20,7 @@ public:
 	~BST();
 	void insertBST(T, std::string);
 	void printIndentedTree(std::ostream&);
+	void inorder(BSTNode<T> *root);
 	bool deleteBST(std::string);
 	bool isInTree(std::string);
 	BSTNode<T>* getRoot() { return root; }
@@ -70,6 +72,18 @@ void BST<T>::printR(BSTNode<T>* r, int indent, std::ostream& output) {
 			printR(r->getLeft(), indent + 2, output);
 		if (r->getRight() != nullptr)
 			printR(r->getRight(), indent + 2, output);
+	}
+}
+
+template<class Type>
+void BST<Type>::inorder(BSTNode<Type> *root) {
+	if (root != NULL) {
+		inorder(root->getLeft());
+		printCharMultiTimes('-', 30);
+		std::cout << std::endl;
+		std::cout << root->getData();
+		printCharMultiTimes('-', 30);
+		inorder(root->getRight());
 	}
 }
 

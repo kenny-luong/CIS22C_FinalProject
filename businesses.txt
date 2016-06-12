@@ -1,5 +1,100 @@
-Google
-Facebook
-Microsoft
-Yelp
-Apple
+San Jose Disk Drive
+1345 bascom ave San Jose CA 95118
+31
+89
+Intsun
+136 lovehum ave Santa Clara CA 97110
+11
+27
+KenDrive
+6943 First st Cupertino CA 95214
+60
+173
+Nutchem
+98 Aaron CT San Jose CA 94146
+81
+227
+Kenbeep
+1094 Aborn CT Cupertino CA 93310
+72
+203
+Seon Coffee
+694 Assis ave Los Gatos CA 59220
+91
+271
+Kyle Investment
+5946 Aster DR Los Angeles CA 62049
+38
+108
+Datacorp
+768 Asoeb Dr San Jose CA 49205
+99
+288
+Eden Architectural Design
+159 barrow Ct Campbell CA 49520
+33
+105
+Lumna Merchant Service
+252 Basalt Ct Santa Clara CA 34524
+16
+47
+Intmainjoy
+Basuke Ave San Jose CA 94225
+31
+99
+Computer Geeks
+953 Woodpart Dr Campbell CA 83723
+20
+55
+Luoung Life Plan
+345 Begonia Ct Los Angeles CA 42463
+74
+232
+Doubledouble
+6452 Bluewater Cir San Jose CA 56754
+59
+192
+Micro Insurance
+34 Stevens Dr Campbell CA 43545
+62
+181
+Network Airline
+5636 Brown St Los Gatos CA 67864
+61
+196
+Demon Inc
+4741 Capay Pl San Jose CA 92032
+31
+132
+Advanced Coding School
+235 Canada Blvd Los Angeles CA 25535
+48
+151
+Captain Company
+637 Caterpillar St Sunny Vale CA 63472
+59
+179
+Santa Finance
+2846 Catkin Ct San Jose CA 34352
+21
+68
+YouandI
+342 Dellwood Dr San Jose CA 53672
+67
+187
+Grand Camp
+63 Delmonte Blvd Campbell CA 93718
+79
+253
+Cheap Travel
+4527 Eldva Ct Los Angeles CA 48204
+91
+288
+Dynamic Event Service
+6828 Fleet Dr Cupertino CA 24523
+80
+236
+Loving Insurance
+920 Greenlove Ave Santa Clara CA 95117
+81
+230

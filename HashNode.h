@@ -17,10 +17,14 @@ public:
 
   void displayBucket(HashNode<Type> *bucket) {
     HashNode<Type> *temp = bucket;
-
+    int tempInt = bucket->count;
     while (temp != NULL) {
-      std::cout << temp->keyValue << std::endl;
+      std::cout << temp->data << std::endl;
       temp = temp->link;
+      if (tempInt != 1) {
+        std::cout << "Entering bucket: " << std::endl << std::endl;
+        tempInt = 1;
+      }
     }
   }
 };

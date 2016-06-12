@@ -3,6 +3,8 @@
 
 #include "HashNode.h"
 #include <string>
+#include "Business.h"
+#include "includes.h"
 
 using namespace std;
 
@@ -22,7 +24,7 @@ public:
     return SIZE;
   }
 
-  bool add(string keyValue, const Type& object) {
+  bool add(string keyValue, Type object) {
     HashNode<Type> *newNode = new HashNode<Type>;
     newNode->data = object;
     newNode->keyValue = keyValue;
@@ -53,7 +55,54 @@ public:
   void displayList() {
     for (int i = 0; i < SIZE; i++) {
       if (bucket[i] != NULL) {
+        printCharMultiTimes('-', 30);
+        cout << endl << "Index: " << i << endl;
+        printCharMultiTimes('-', 30);
+        cout << endl;
         bucket[i]->displayBucket(bucket[i]);
+      }
+    }
+  }
+
+  bool contains(string keyValue) {
+    int index = hashFunction(keyValue);
+
+    HashNode<Type> *temp = bucket[index];
+    HashNode<Type> *trail;
+
+    if (bucket[index] == NULL) {
+      return false;
+    } else {
+      if (keyValue == bucket[index]->data.getName()) {
+        return true;
+      } else {
+        while (temp != NULL) {
+          trail = temp;
+          temp = temp->link;
+          if (temp->keyValue == keyValue) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+  Business *getBusiness(string keyValue) {
+    int index = hashFunction(keyValue);
+
+    HashNode<Type> *temp = bucket[index];
+    HashNode<Type> *trail;
+
+    if (keyValue == bucket[index]->data.getName()) {
+        return &temp->data;
+    } else {
+      while (temp != NULL) {
+        trail = temp;
+        temp = temp->link;
+        if (temp->keyValue == keyValue) {
+          return &temp->data;
+        }
       }
     }
   }
@@ -70,20 +119,21 @@ public:
     HashNode<Type> *trail;
 
     if (bucket[index] == NULL) {
-      cout << "Does not exist here." << endl;
-    }
-    if (keyValue == bucket[index]->keyValue) {
-      bucket[index] = bucket[index]->link;
-      return true;
+      return false;
     } else {
-      while (temp != NULL) {
-        trail = temp;
-        temp = temp->link;
-        if (temp->keyValue == keyValue) {
-          trail = temp->link;
-          temp->link = NULL;
-          delete temp;
-          return true;
+      if (keyValue == bucket[index]->data.getName()) {
+        bucket[index] = bucket[index]->link;
+        return true;
+      } else {
+        while (temp != NULL) {
+          trail = temp;
+          temp = temp->link;
+          if (temp->keyValue == keyValue) {
+            trail = temp->link;
+            temp->link = NULL;
+            delete temp;
+            return true;
+          }
         }
       }
     }
