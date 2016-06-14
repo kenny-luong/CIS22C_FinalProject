@@ -44,6 +44,9 @@ public:
         }
         temp->link = newNode;
         bucket[index]->count++;
+      } else {
+        std::cout << "Bucket at index " << index << " is full." << std::endl;
+        std::cout << keyValue << " was not added." << std::endl;
       }
     }
     return true;
