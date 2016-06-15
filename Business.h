@@ -13,6 +13,7 @@ private:
 	int numRatings;
 	int ratingsSum;
 	double averageRating;
+	void setAverageRating(int, int);
 public:
 	Business();
 	Business(std::string); // Garbage contructor used just for testing file saving / loading
@@ -23,14 +24,12 @@ public:
 	std::string getLocation() { return location; }
 	int getRatingsCount() { return numRatings; }
 	int getRatingsSum() { return ratingsSum; }
-	int getAvgRating() { return averageRating; }
+	double getAvgRating() { return averageRating; }
 	void addRating(int);
-	void setAverageRating(int, int);
-	void displayProfile();
 	void writeToFile(std::ostream&);
 	bool operator<(const Business&);
 	bool operator>(const Business&);
 	bool operator==(const Business&);
-	friend std::ostream& operator<<(std::ostream&, const Business&);
+	friend std::ostream& operator<<(std::ostream&, Business*);
 };
 #endif
