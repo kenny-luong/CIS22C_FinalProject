@@ -4,6 +4,8 @@
 #include <iostream>
 #include <string>
 
+using namespace std;
+
 template <class T>
 class LinkedList{
 private:
@@ -119,7 +121,7 @@ void LinkedList<T>::deleteAt(int index) {
 			delete deleteMe;
 			length--;
 	}
-	else if (index == length-1) { //delete the last node	
+	else if (index == length-1) { //delete the last node
 		BSTNode<T>* curr = root;
 		for (int i = 0; i < length - 2; i++) {
 			curr = curr->getRight();

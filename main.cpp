@@ -60,6 +60,8 @@ int main() {
 		int mainMenu = selectMainMenu();
 		cin.ignore();
 		system("CLS");
+		ofstream newout;
+		newout.open("businesses.txt");
 		switch (mainMenu) {
 		case 1: {
 			string name;
@@ -72,6 +74,7 @@ int main() {
 			Business *newBusiness = new Business(name, address);
 			tree.insertBST(newBusiness, name);
 			hash.add(name, newBusiness);
+			tree.writeToFile(newout);
 			break;
 		}
 		case 2: {
@@ -85,12 +88,9 @@ int main() {
 				cout << "Would you like to delete this? (Y/N): ";
 				cin >> deleteYesOrNo;
 				if (deleteYesOrNo == 'Y' || deleteYesOrNo == 'y') {
-					if (hash.deleteObject(name)) {
-						cout << "This worked" << endl;
-					}
-					if (tree.deleteBST(name)) {
-						cout << "so did this..." << endl;
-					}
+					hash.deleteObject(name);
+					tree.deleteBST(name);
+					tree.writeToFile(newout);
 				}
 			}
 			else {
@@ -132,9 +132,22 @@ int main() {
 			system("PAUSE");
 			break;
 		}
+		case 6: {
+			tree.printIndentedTree(cout);
+			system("PAUSE");
+			break;
+		}
+		case 7: {
+			cout << "Load Factor: " << 25.0 / 53.0 << endl;
+			cout << "Longest Bucket is " << hash.getLongestBucket() << " at index " << hash.getIndexOfLongestBucket() << endl;
+			cout << "The number of collisions is: " << hash.getCollisionCount() << endl;
+			system("PAUSE");
+			break;
+		}
 		case 8: {
 			string name;
 			int rating;
+			ofstream newout;
 			cout << "Enter the name of the business you want to rate: ";
 			getline(cin, name);
 			if (tree.isInTree(name)) {
@@ -143,6 +156,7 @@ int main() {
 				cout << "[ 1 2 3 4 5 ]" << endl;
 				cin >> rating;
 				hash.getBusiness(name)->addRating(rating);
+				tree.writeToFile(newout);
 				cout << hash.getBusiness(name);
 				system("PAUSE");
 			}
@@ -153,8 +167,6 @@ int main() {
 			break;
 		}
 		case 9: {
-			ofstream newout;
-			newout.open("businesses.txt");
 			tree.writeToFile(newout);
 			newout.close();
 			return 0;

@@ -10,14 +10,19 @@ using namespace std;
 
 template<class Type>
 class Hash {
-public:
+private:
 	static const int SIZE = 53;
+	int collisionCount;
 	HashNode<Type> *bucket[SIZE];
+	int longestBucket;
+	int indexOfLongestBucket;
 public:
 	Hash() {
 		for (int i = 0; i < SIZE; i++) {
 			bucket[i] = NULL;
 		}
+		collisionCount = 0;
+		longestBucket = 0;
 	}
 
 	int getSize() {
@@ -45,6 +50,11 @@ public:
 				}
 				temp->link = newNode;
 				bucket[index]->count++;
+				if (bucket[index]->count > longestBucket) {
+					longestBucket = bucket[index]->count;
+					indexOfLongestBucket = index;
+				}
+				collisionCount++;
 			}
 			else {
 				std::cout << "Bucket at index " << index << " is full." << std::endl;
@@ -56,6 +66,9 @@ public:
 		return false;
 	}
 
+	int getLongestBucket() { return longestBucket;  }
+	int getIndexOfLongestBucket() { return indexOfLongestBucket;  }
+	int getCollisionCount() { return collisionCount;  }
 
 	void displayList() {
 		for (int i = 0; i < SIZE; i++) {
