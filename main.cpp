@@ -7,9 +7,6 @@
 #include "Business.h"
 #include "includes.h"
 
-// #include "User.h"
-// #include "BinarySearchTree.h"
-
 using namespace std;
 
 int selectMainMenu();
@@ -17,6 +14,7 @@ int selectMainMenu();
 template<class Type>
 bool LoadBusinesses(BST<Type> &tree, Hash<Type> &hash) {
 	ifstream businessData;
+	headNode.count = 0;
 	try {
 		businessData.open("businesses.txt");
 		if (!businessData.is_open()) {
@@ -45,23 +43,32 @@ bool LoadBusinesses(BST<Type> &tree, Hash<Type> &hash) {
 		tempBusiness = new Business(tempName, tempAddress, numOfRatings, sumOfRatings);
 		tree.insertBST(tempBusiness, tempName);
 		hash.add(tempName, tempBusiness);
+		headNode.count++;
 	}
 
 	businessData.close();
 	return 1;
 }
 
+struct headNodeStruct {
+	int count, arySize;
+	BST<Business*>* pTree;
+	Hash<Business*>* pHash;
+} headNode;
+
 int main() {
 	BST<Business*> tree;
 	Hash<Business*> hash;
+	headNode.pTree = &tree;
+	headNode.pHash = &hash;
 	if (!LoadBusinesses(tree, hash))
 		return 0;
+	ofstream dataFile;
+	
 	while (true) {
 		int mainMenu = selectMainMenu();
 		cin.ignore();
 		system("CLS");
-		ofstream newout;
-		newout.open("businesses.txt");
 		switch (mainMenu) {
 		case 1: {
 			string name;
@@ -74,7 +81,10 @@ int main() {
 			Business *newBusiness = new Business(name, address);
 			tree.insertBST(newBusiness, name);
 			hash.add(name, newBusiness);
-			tree.writeToFile(newout);
+			headNode.count++;
+			dataFile.open("businesses.txt");
+			tree.writeToFile(dataFile);
+			dataFile.close();
 			break;
 		}
 		case 2: {
@@ -88,9 +98,16 @@ int main() {
 				cout << "Would you like to delete this? (Y/N): ";
 				cin >> deleteYesOrNo;
 				if (deleteYesOrNo == 'Y' || deleteYesOrNo == 'y') {
-					hash.deleteObject(name);
-					tree.deleteBST(name);
-					tree.writeToFile(newout);
+					if (hash.deleteObject(name)) {
+						cout << "This worked" << endl;
+					}
+					if (tree.deleteBST(name)) {
+						cout << "so did this..." << endl;
+					}
+					headNode.count--;
+					dataFile.open("businesses.txt");
+					tree.writeToFile(dataFile);
+					dataFile.close();
 				}
 			}
 			else {
@@ -132,22 +149,9 @@ int main() {
 			system("PAUSE");
 			break;
 		}
-		case 6: {
-			tree.printIndentedTree(cout);
-			system("PAUSE");
-			break;
-		}
-		case 7: {
-			cout << "Load Factor: " << 25.0 / 53.0 << endl;
-			cout << "Longest Bucket is " << hash.getLongestBucket() << " at index " << hash.getIndexOfLongestBucket() << endl;
-			cout << "The number of collisions is: " << hash.getCollisionCount() << endl;
-			system("PAUSE");
-			break;
-		}
 		case 8: {
 			string name;
 			int rating;
-			ofstream newout;
 			cout << "Enter the name of the business you want to rate: ";
 			getline(cin, name);
 			if (tree.isInTree(name)) {
@@ -156,7 +160,9 @@ int main() {
 				cout << "[ 1 2 3 4 5 ]" << endl;
 				cin >> rating;
 				hash.getBusiness(name)->addRating(rating);
-				tree.writeToFile(newout);
+				dataFile.open("businesses.txt");
+				tree.writeToFile(dataFile);
+				dataFile.close();
 				cout << hash.getBusiness(name);
 				system("PAUSE");
 			}
@@ -167,8 +173,6 @@ int main() {
 			break;
 		}
 		case 9: {
-			tree.writeToFile(newout);
-			newout.close();
 			return 0;
 		}
 		}
