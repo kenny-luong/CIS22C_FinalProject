@@ -1,3 +1,13 @@
+/*
+
+Kenny Luong
+Kyle Williams
+Seonwoo Chung
+Lum Naw
+
+*/
+
+
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -108,17 +118,34 @@ int main() {
 				char deleteYesOrNo;
 				cout << name << " was found!" << endl;
 				cout << "Would you like to delete this? (Y/N): ";
-				cin >> deleteYesOrNo;
-				if (deleteYesOrNo == 'Y' || deleteYesOrNo == 'y') {
-					hash.deleteObject(name);
-					tree.deleteBST(name);
-					headNode.count--;
-					dataFile.open("businesses.txt");
-					tree.writeToFile(dataFile);
-					dataFile.close();
-				}
-			}
-			else {
+				do {
+					if (cin >> deleteYesOrNo) {
+						if (deleteYesOrNo == 'Y' || deleteYesOrNo == 'y') {
+							hash.deleteObject(name);
+							tree.deleteBST(name);
+							headNode.count--;
+							dataFile.open("businesses.txt");
+							tree.writeToFile(dataFile);
+							dataFile.close();
+							cout << name << " was successfully deleted." << endl;
+						}
+						else if (deleteYesOrNo == 'N' || deleteYesOrNo == 'n') {
+							cout << name << " was not deleted" << endl;
+							system("PAUSE");
+							break;
+						}
+						else {
+							cout << "That was not a valid option." << endl;
+							system("PAUSE");
+						}
+						break;
+					}
+					else {
+						cin.clear();
+						cin.ignore(1000, '\n');
+					}
+				} while (true);
+			} else {
 				cout << "We could not find this business in our database." << endl;
 				system("PAUSE");
 			}
@@ -164,8 +191,9 @@ int main() {
 		}
 		case 7: {
 			cout << "Efficiency" << endl << endl;
-			cout << sizeOfArray() << " " << headNode.arySize;
 			cout << "Load Factor: " << static_cast<double>(headNode.count) / static_cast<double>(headNode.arySize) << endl;
+			cout << "Longest bucket: " << hash.findLongestBucket() << endl;
+			cout << "Number of Collisions: " << hash.getCollisionCount() << endl;
 			system("PAUSE");
 			break;
 		}
@@ -175,16 +203,38 @@ int main() {
 			cout << "Enter the name of the business you want to rate: ";
 			getline(cin, name);
 			if (tree.isInTree(name)) {
-				cout << name << " was found!" << endl;
-				cout << "What would you like to rate " << name << "?" << endl;
-				cout << "[ 1 2 3 4 5 ]" << endl;
-				cin >> rating;
-				hash.getBusiness(name)->addRating(rating);
-				dataFile.open("businesses.txt");
-				tree.writeToFile(dataFile);
-				dataFile.close();
-				cout << hash.getBusiness(name);
-				system("PAUSE");
+				do {
+					system("CLS");
+					cout << name << " was found!" << endl;
+					cout << "What would you like to rate " << name << "?" << endl;
+					cout << "[ 1 2 3 4 5 ]" << endl;
+					if (cin >> rating) {
+						if (rating > 5 || rating < 1) {
+							cout << endl << "Not a valid option" << endl;
+							system("PAUSE");
+							cin.clear();
+							cin.ignore(1000, '\n');
+						}
+						else {
+							hash.getBusiness(name)->addRating(rating);
+							dataFile.open("businesses.txt");
+							tree.writeToFile(dataFile);
+							dataFile.close();
+							cout << hash.getBusiness(name);
+							system("PAUSE");
+							break;
+						}
+
+					}
+					else {
+						cout << endl << "Not a valid option" << endl;
+						system("PAUSE");
+						cin.clear();
+						cin.ignore(1000, '\n');
+					}
+					
+				} while (true);
+
 			}
 			else {
 				cout << "That business could not be found" << endl;
@@ -195,26 +245,39 @@ int main() {
 		case 9: {
 			return 0;
 		}
+		default: {
+			break;
+		}
 		}
 	}
 }
 
 int selectMainMenu() {
-	system("CLS");
-	int choice;
-	cout << "Main Menu" << endl;
-	cout << "1. Add a new business" << endl;
-	cout << "2. Delete a business" << endl;
-	cout << "3. Find a business" << endl;
-	cout << "4. List businesses (hash)" << endl;
-	cout << "5. List businesses (sorted)" << endl;
-	cout << "6. Print indented tree" << endl;
-	cout << "7. Efficiency" << endl;
-	cout << "8. Team choice (Enter a rating)" << endl;
-	cout << "9. Quit" << endl << endl << endl;
-	cout << "Enter choice: ";
-	cin >> choice;
-	return choice;
+	do {
+		system("CLS");
+		int choice;
+		cout << "Main Menu" << endl;
+		cout << "1. Add a new business" << endl;
+		cout << "2. Delete a business" << endl;
+		cout << "3. Find a business" << endl;
+		cout << "4. List businesses (hash)" << endl;
+		cout << "5. List businesses (sorted)" << endl;
+		cout << "6. Print indented tree" << endl;
+		cout << "7. Efficiency" << endl;
+		cout << "8. Team choice (Enter a rating)" << endl;
+		cout << "9. Quit" << endl << endl << endl;
+		cout << "Enter choice: ";
+		if (cin >> choice) {
+			return choice;
+		}
+		else {
+			cout << endl << "Not a valid option. Select a number." << endl;
+			system("PAUSE");
+			cin.clear();
+			cin.ignore(1000, '\n');
+		}
+	} while (true);
+
 }
 
 int sizeOfArray() {
