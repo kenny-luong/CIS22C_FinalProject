@@ -11,7 +11,10 @@ public:
 	Type data;
 	HashNode<Type> *link;
 	int count;
+
 	HashNode() {
+		link = NULL;
+		data = NULL;
 		count = 0;
 	}
 
@@ -21,7 +24,7 @@ public:
 		while (temp != NULL) {
 			std::cout << temp->data << std::endl;
 			temp = temp->link;
-			if (tempInt != 1) {
+			if (tempInt > 1) {
 				std::cout << "Entering bucket: " << std::endl << std::endl;
 				tempInt = 1;
 			}

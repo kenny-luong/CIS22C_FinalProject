@@ -10,11 +10,11 @@
 using namespace std;
 
 int selectMainMenu();
+int sizeOfArray();
 
 template<class Type>
 bool LoadBusinesses(BST<Type> &tree, Hash<Type> &hash) {
 	ifstream businessData;
-	headNode.count = 0;
 	try {
 		businessData.open("businesses.txt");
 		if (!businessData.is_open()) {
@@ -43,7 +43,6 @@ bool LoadBusinesses(BST<Type> &tree, Hash<Type> &hash) {
 		tempBusiness = new Business(tempName, tempAddress, numOfRatings, sumOfRatings);
 		tree.insertBST(tempBusiness, tempName);
 		hash.add(tempName, tempBusiness);
-		headNode.count++;
 	}
 
 	businessData.close();
@@ -51,20 +50,25 @@ bool LoadBusinesses(BST<Type> &tree, Hash<Type> &hash) {
 }
 
 struct headNodeStruct {
-	int count, arySize;
+	int count = sizeOfArray(), arySize = count * 1.3;
 	BST<Business*>* pTree;
 	Hash<Business*>* pHash;
 } headNode;
 
 int main() {
+
 	BST<Business*> tree;
-	Hash<Business*> hash;
+	Hash<Business*> hash(headNode.arySize);
+
 	headNode.pTree = &tree;
 	headNode.pHash = &hash;
-	if (!LoadBusinesses(tree, hash))
+
+	if (!LoadBusinesses(tree, hash)) {
 		return 0;
-	ofstream dataFile;
+	}
+	system("PAUSE");
 	
+	ofstream dataFile;
 	while (true) {
 		int mainMenu = selectMainMenu();
 		cin.ignore();
@@ -79,12 +83,20 @@ int main() {
 			cout << "Enter the address of the business: ";
 			getline(cin, address);
 			Business *newBusiness = new Business(name, address);
-			tree.insertBST(newBusiness, name);
-			hash.add(name, newBusiness);
-			headNode.count++;
-			dataFile.open("businesses.txt");
-			tree.writeToFile(dataFile);
-			dataFile.close();
+			if (!hash.contains(name)) {
+				if (hash.add(name, newBusiness)) {
+					tree.insertBST(newBusiness, name);
+					headNode.count++;
+					dataFile.open("businesses.txt");
+					tree.writeToFile(dataFile);
+					dataFile.close();
+				}
+			} else {
+				cout << name << " already exists in our database and could not be added." << endl;
+			}
+
+			
+			system("PAUSE");
 			break;
 		}
 		case 2: {
@@ -92,18 +104,14 @@ int main() {
 			cout << "Delete a business " << endl << endl;
 			cout << "Enter the name of the business:";
 			getline(cin, name);
-			if (tree.isInTree(name)) {
+			if (hash.contains(name)) {
 				char deleteYesOrNo;
 				cout << name << " was found!" << endl;
 				cout << "Would you like to delete this? (Y/N): ";
 				cin >> deleteYesOrNo;
 				if (deleteYesOrNo == 'Y' || deleteYesOrNo == 'y') {
-					if (hash.deleteObject(name)) {
-						cout << "This worked" << endl;
-					}
-					if (tree.deleteBST(name)) {
-						cout << "so did this..." << endl;
-					}
+					hash.deleteObject(name);
+					tree.deleteBST(name);
 					headNode.count--;
 					dataFile.open("businesses.txt");
 					tree.writeToFile(dataFile);
@@ -146,6 +154,18 @@ int main() {
 			printCharMultiTimes('-', 30);
 			cout << endl;
 			tree.inorder(tree.getRoot());
+			system("PAUSE");
+			break;
+		}
+		case 6: {
+			tree.printIndentedTree(cout);
+			system("PAUSE");
+			break;
+		}
+		case 7: {
+			cout << "Efficiency" << endl << endl;
+			cout << sizeOfArray() << " " << headNode.arySize;
+			cout << "Load Factor: " << static_cast<double>(headNode.count) / static_cast<double>(headNode.arySize) << endl;
 			system("PAUSE");
 			break;
 		}
@@ -195,4 +215,18 @@ int selectMainMenu() {
 	cout << "Enter choice: ";
 	cin >> choice;
 	return choice;
+}
+
+int sizeOfArray() {
+	ifstream inputFile;
+
+	inputFile.open("businesses.txt", ios::in);
+
+	string temp;
+	int counter = 0;
+	while (getline(inputFile, temp)) {
+		counter++;
+	}
+	inputFile.close();
+	return counter / 4;
 }

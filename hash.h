@@ -2,6 +2,7 @@
 #define HASH_H
 
 #include "HashNode.h"
+#include <iostream>
 #include <string>
 #include "Business.h"
 #include "includes.h"
@@ -11,16 +12,17 @@ using namespace std;
 template<class Type>
 class Hash {
 private:
-	static const int SIZE = 53;
+	int SIZE;
 	int collisionCount;
-	HashNode<Type> *bucket[SIZE];
+	HashNode<Type> *bucket;
 	int longestBucket;
 	int indexOfLongestBucket;
 public:
-	Hash() {
-		for (int i = 0; i < SIZE; i++) {
-			bucket[i] = NULL;
-		}
+	Hash() {}
+	Hash(int arraySize) {
+		SIZE = arraySize;
+		bucket = new HashNode<Type>[SIZE];
+
 		collisionCount = 0;
 		longestBucket = 0;
 	}
@@ -37,32 +39,32 @@ public:
 
 		int index = hashFunction(keyValue);
 
-		HashNode<Type> *temp = bucket[index];
+		HashNode<Type> *temp = &bucket[index];
 
-		if (bucket[index] == NULL) {
-			bucket[index] = newNode;
-			bucket[index]->count++;
+		if (bucket[index].data == NULL) {
+			bucket[index].data = object;
+			return true;
 		}
 		else {
-			if (bucket[index]->count < 3) {
+			if (bucket[index].count < 3) {
 				while (temp->link != NULL) {
 					temp = temp->link;
 				}
 				temp->link = newNode;
-				bucket[index]->count++;
-				if (bucket[index]->count > longestBucket) {
-					longestBucket = bucket[index]->count;
+				if (bucket[index].count > longestBucket) {
+					longestBucket = bucket[index].count;
 					indexOfLongestBucket = index;
 				}
+				bucket[index].count++;
+				cout << endl << "There already exists an entry at " << index << " so " << keyValue << " was placed in a bucket." << endl << endl;
 				collisionCount++;
+				return true;
 			}
 			else {
 				std::cout << "Bucket at index " << index << " is full." << std::endl;
 				std::cout << keyValue << " was not added." << std::endl;
 			}
 		}
-		return true;
-
 		return false;
 	}
 
@@ -72,12 +74,12 @@ public:
 
 	void displayList() {
 		for (int i = 0; i < SIZE; i++) {
-			if (bucket[i] != NULL) {
+			if (bucket[i].data != NULL) {
 				printCharMultiTimes('-', 30);
 				cout << endl << "Index: " << i << endl;
 				printCharMultiTimes('-', 30);
 				cout << endl;
-				bucket[i]->displayBucket(bucket[i]);
+				bucket[i].displayBucket(&bucket[i]);
 			}
 		}
 	}
@@ -85,19 +87,17 @@ public:
 	bool contains(string keyValue) {
 		int index = hashFunction(keyValue);
 
-		HashNode<Type> *temp = bucket[index];
-		HashNode<Type> *trail;
+		HashNode<Type> *temp = &bucket[index];
 
-		if (bucket[index] == NULL) {
+		if (bucket[index].data == NULL) {
 			return false;
 		}
 		else {
-			if (keyValue == bucket[index]->data->getName()) {
+			if (keyValue == bucket[index].data->getName()) {
 				return true;
 			}
 			else {
-				while (temp != NULL) {
-					trail = temp;
+				while (temp->link != NULL) {
 					temp = temp->link;
 					if (temp->keyValue == keyValue) {
 						return true;
@@ -111,10 +111,10 @@ public:
 	Business *getBusiness(string keyValue) {
 		int index = hashFunction(keyValue);
 
-		HashNode<Type> *temp = bucket[index];
+		HashNode<Type> *temp = &bucket[index];
 		HashNode<Type> *trail;
 
-		if (keyValue == bucket[index]->data->getName()) {
+		if (keyValue == bucket[index].data->getName()) {
 			return temp->data;
 		}
 		else {
@@ -137,25 +137,30 @@ public:
 	bool deleteObject(string keyValue) {
 		int index = hashFunction(keyValue);
 
-		HashNode<Type> *temp = bucket[index];
+		HashNode<Type> *temp = &bucket[index];
 		HashNode<Type> *trail;
 
-		if (bucket[index] == NULL) {
+		if (bucket[index].data == NULL) {
 			return false;
 		}
 		else {
-			if (keyValue == bucket[index]->data->getName()) {
-				bucket[index] = bucket[index]->link;
+			if (keyValue == bucket[index].data->getName() && bucket[index].count == 0) {
+				bucket[index].data = NULL;
 				return true;
+			}
+			else if (keyValue == bucket[index].data->getName() && bucket[index].count > 0) {
+				bucket[index].data = bucket[index].link->data;
+				bucket[index].link = bucket[index].link->link;
+				bucket[index].count--;
 			}
 			else {
 				while (temp != NULL) {
 					trail = temp;
 					temp = temp->link;
 					if (temp->keyValue == keyValue) {
-						trail = temp->link;
-						temp->link = NULL;
+						trail->link = temp->link;
 						delete temp;
+						bucket[index].count--;
 						return true;
 					}
 				}
@@ -169,7 +174,7 @@ public:
 		for (int i = 0; i < keyValue.length(); i++) {
 			value += keyValue.at(i);
 		}
-		return value % SIZE;
+		return (((16 * value) + 18) % 271) % SIZE;
 	}
 };
 
