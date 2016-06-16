@@ -5,6 +5,7 @@
 #include <iomanip>
 #include <fstream>
 #include "includes.h"
+#include "Queue.cpp"
 
 template <class T>
 class BST {
@@ -20,6 +21,7 @@ public:
 	~BST();
 	void insertBST(T, std::string);
 	void printIndentedTree(std::ostream&);
+	void writeToFile(std::ostream&);
 	void inorder(BSTNode<T> *root);
 	bool deleteBST(std::string);
 	bool isInTree(std::string);
@@ -197,6 +199,26 @@ bool BST<T>::isInTree(std::string key) {
 		return false;
 	else {
 		return findR(root, key);
+	}
+}
+
+template <class T>
+void BST<T>::writeToFile(std::ostream& output) {
+	Queue<BSTNode<T>*> q;
+	if (root == nullptr)
+		return;
+	q.enque(root);
+	BSTNode<T>* temp = nullptr;
+	while (!q.isEmpty()) {
+		temp = q.deque();
+		output << temp->getData()->getName() << "\n";
+		output << temp->getData()->getLocation() << "\n";
+		output << temp->getData()->getRatingsCount() << "\n";
+		output << temp->getData()->getRatingsSum() << "\n";
+		if (temp->getLeft() != nullptr)
+			q.enque(temp->getLeft());
+		if (temp->getRight() != nullptr)
+			q.enque(temp->getRight());
 	}
 }
 #endif
