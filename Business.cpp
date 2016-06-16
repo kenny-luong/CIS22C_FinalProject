@@ -6,8 +6,8 @@
 Business::Business() {}
 
 /*
-	Gargabe constructor used just for testing purposes.
-	TODO: Remove this when done testing.
+Gargabe constructor used just for testing purposes.
+TODO: Remove this when done testing.
 */
 
 Business::Business(std::string name) {
@@ -67,11 +67,11 @@ bool Business::operator==(const Business& b) {
 	return name == b.name;
 }
 
-std::ostream& operator<<(std::ostream& os, const Business &b) {
-	os << "Name: " << b.name << std::endl;
-	os << "Address: " << b.location << std::endl;
+std::ostream& operator<<(std::ostream& os, Business* b) {
+	os << "Name: " << b->name << std::endl;
+	os << "Address: " << b->location << std::endl;
 	os << std::setprecision(2);
-	os << "Average rating: " << b.averageRating << std::endl;
-	os << "Number of ratings submitted: " << b.numRatings << std::endl;
+	os << "Average rating: " << b->averageRating << std::endl;
+	os << "Number of ratings submitted: " << b->numRatings << std::endl;
 	return os;
 }
